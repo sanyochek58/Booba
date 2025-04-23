@@ -42,4 +42,21 @@ public class UserServiceImpl implements UserService{
 
         return userRepository.save(user);
     }
+    @Override
+    @Transactional
+    public Boolean authUser(UserDTO dto){
+        Optional<User> userOpt = userRepository.findByEmail(dto.getEmail());
+        boolean isAuth = true;
+        if(userOpt.isEmpty()){
+            isAuth = false;
+            throw new RuntimeException("Пользователь не существует !");
+        }
+
+        User user = userOpt.get();
+        if(!user.getPassword().equals(dto.getPassword())){
+            isAuth = false;
+            throw new RuntimeException("Неверный пароль!");
+        }
+        return isAuth;
+    }
 }
