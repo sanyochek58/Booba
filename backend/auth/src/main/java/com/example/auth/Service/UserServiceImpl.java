@@ -3,17 +3,24 @@ package com.example.auth.Service;
 import com.example.auth.Entity.DTO.UserDTO;
 import com.example.auth.Entity.Model.User;
 import com.example.auth.Repository.UserRepository;
+import com.example.auth.Security.JwtTokenUtil;
 import jakarta.transaction.Transactional;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtTokenUtil jwtTokenUtil;
 
-    public UserServiceImpl(UserRepository userRepository){
+    public UserServiceImpl(UserRepository userRepository, JwtTokenUtil jwtTokenUtil){
         this.userRepository = userRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     @Override
@@ -33,10 +40,8 @@ public class UserServiceImpl implements UserService{
 
         User user = new User();
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setUsername(dto.getUsername());
-
-
 
         user.setBirthOfDate(dto.getBirthOfDate());
 
@@ -44,7 +49,7 @@ public class UserServiceImpl implements UserService{
     }
     @Override
     @Transactional
-    public Boolean authUser(UserDTO dto){
+    public String authUser(UserDTO dto){
         Optional<User> userOpt = userRepository.findByEmail(dto.getEmail());
         boolean isAuth = true;
         if(userOpt.isEmpty()){
@@ -53,10 +58,10 @@ public class UserServiceImpl implements UserService{
         }
 
         User user = userOpt.get();
-        if(!user.getPassword().equals(dto.getPassword())){
+        if(passwordEncoder.matches(dto.getPassword(),user.getUsername())){
             isAuth = false;
             throw new RuntimeException("Неверный пароль!");
         }
-        return isAuth;
+        return jwtTokenUtil.generateToken(user.getUsername());
     }
 }

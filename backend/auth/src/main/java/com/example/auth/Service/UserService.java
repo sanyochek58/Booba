@@ -5,5 +5,5 @@ import com.example.auth.Entity.Model.User;
 
 public interface UserService {
     User registerUser(UserDTO dto);
-    Boolean authUser(UserDTO dto);
+    String authUser(UserDTO dto);
 }

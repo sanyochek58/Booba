@@ -23,9 +23,7 @@ public class UserController{
 
     @PostMapping("/auth")
     public ResponseEntity<String> auth(@RequestBody UserDTO dto){
-        if(userService.authUser(dto)) {
-            return ResponseEntity.ok("User was successfully enter in service");
-        }
-        return ResponseEntity.ok("User not entered in service");
+        String jwToken = userService.authUser(dto);
+        return ResponseEntity.ok(jwToken);
     }
 }
