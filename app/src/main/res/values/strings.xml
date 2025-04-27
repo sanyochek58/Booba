@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Booba</string>
+    <string name="welcome_text">Welcome to Booba</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_up">Sign up</string>
+    <string name="not_account">Not a Booba account ?</string>
+    <string name="email_support">Enter your email</string>
+    <string name="password_support">Enter your password</string>
+    <string name="username_support">Enter your username</string>
+    <string name="birth_support">Birthday:dd/MM/yyyy</string>
+</resources>
